@@ -89,7 +89,7 @@ WSGI_APPLICATION = 'EV_Stations.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ev_charging',
+        'NAME': 'ev_charging_db',
         'USER': 'root',
         'PASSWORD': 'theplanetisflat',
         'HOST': 'localhost',
