@@ -1,5 +1,7 @@
 from django.contrib.auth import views as auth_views
 from django.shortcuts import render
+from django.conf import settings
+from django.conf.urls.static import static
 
 from django.urls import path
 from .views import ( 
@@ -69,5 +71,9 @@ urlpatterns = [
     path('charging_station_analytics/', ChargingStationAnaliticsCreateListView.as_view(), name="charging_station_analytics"),
     path('analytics/', ChargingStationAnalyticsView.as_view(), name='charging-station-analytics'),
 
+    
    
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
