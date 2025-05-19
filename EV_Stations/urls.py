@@ -4,5 +4,6 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('VoltHub.urls'))
+    path('', include('VoltHub.urls')),
+    path('', include('authentication.urls')) 
 ]
