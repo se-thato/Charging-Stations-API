@@ -7,6 +7,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator
 from django.contrib.auth import get_user_model
+from geopy.geocoders import Nominatim
+
 
 User = get_user_model()
 
@@ -29,14 +31,35 @@ class Profile(models.Model):
 
 class ChargingPoint(models.Model):
     name = models.CharField(max_length=150)
-    location = models.CharField(max_length=150, null=True, blank=True)
-    capicity = models.PositiveIntegerField()
+    address = models.CharField(max_length=255, default="Unknown Address")
+    city = models.CharField(max_length=100, null=True, blank=True)
+    country = models.CharField(max_length=100, null=True, blank=True)
+    capacity = models.PositiveIntegerField()
     available_slots = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
+
+    #this will automatically geocode the location to get latitude and longitude
+    #using geopy to get the latitude and longitude from the location
+    def save(self, *args, **kwargs):
+        if self.address and not self.latitude and not self.longitude:
+            geolocator = Nominatim(user_agent="charging_point_locator")
+            try:
+                geo_location = geolocator.geocode(self.location)
+                if geo_location:
+                    self.latitude = geo_location.latitude
+                    self.longitude = geo_location.longitude
+            except Exception as e:
+                print(f"Geocoding error: {e}")
+
+        super().save(*args, **kwargs)
+
     availability = models.BooleanField(null=True, blank=True)
-    price_per_hour = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    charging_speed_kW = models.PositiveIntegerField(null=True, blank=True)
+    base_price = models.DecimalField(max_digits=6, decimal_places=2, default=10) # Default base price
+    peak_price = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)  # Higher price during peak hours
+    off_peak_price = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)  # Lower price during off-per hours
     is_active = models.BooleanField(default=True)
     off_peak_start = models.TimeField(null=True, blank=True)
     off_peak_end = models.TimeField(null=True, blank=True)
@@ -93,9 +116,8 @@ class Booking(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     station = models.ForeignKey(ChargingPoint, on_delete=models.CASCADE)
-    location = models.CharField(max_length=150)
-    start_time = models.DateField()
-    end_time = models.DateField(null=True, blank=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField(null=True, blank=True)
     costs = models.DecimalField(max_digits=6, decimal_places=2)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -149,7 +171,7 @@ class PaymentMethod(models.Model):
     #to prevent repetitive payment methods
     class Meta:
         unique_together = ('user', 'payment_type', 'last_four_digits', 'email')
-        ordering = ['-created_at'] # Order by most recent first
+        ordering = ['-created_at']
 
 
     def __str__(self):

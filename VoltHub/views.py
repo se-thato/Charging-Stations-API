@@ -44,7 +44,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework.permissions import IsAuthenticated
 
 
 
@@ -486,6 +486,7 @@ class IssueReportListCreateView(generics.ListCreateAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+
 class CommentListCreateView(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
@@ -528,6 +529,7 @@ class CommentListCreateView(generics.ListCreateAPIView):
         
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 #Subcribtion plan views

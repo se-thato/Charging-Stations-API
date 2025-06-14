@@ -1,25 +1,31 @@
-from django.shortcuts import render
-#jwt authentication
+from rest_framework.authentication import BaseAuthentication
+from rest_framework import exceptions
+from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.response import Response
+
 
 class ProtectedView(APIView):
-    """
-    A protected view that requires JWT authentication.
-    Returns a message and user-specific data for authenticated users.
-    """
     permission_classes = [IsAuthenticated]
+    
 
     def get(self, request):
+        return Response({"message": "This is a protected view."})
+    
+
+
+class CustomHeaderAuthentication(BaseAuthentication):
+    # Custom authentication class that will authenticate users based on a custom header
+
+    def authenticate(self, request):
+        user_id = request.headers.get('X-USER-ID')
+        if not user_id:
+            return None
+
         try:
-            # Return user-specific data
-            user_data = {
-                "username": request.user.username,
-                "email": request.user.email,
-            }
-            return Response({"message": "This is protected", "user": user_data})
-        except Exception as e:
-            # Log the error (optional: integrate a logging framework)
-            print(f"Error in ProtectedView: {e}")
-            return Response({"error": "An unexpected error occurred."}, status=500)
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            raise exceptions.AuthenticationFailed('No such user')
+
+        return (user, None)
