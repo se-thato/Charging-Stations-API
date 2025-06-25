@@ -6,7 +6,7 @@ class CustomCursorPagination(CursorPagination):
     """
     Custom pagination class that uses cursor-based pagination.
     """
-    page_size = 3
+    page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
     ordering = 'id'
@@ -16,7 +16,7 @@ class CustomPageNumberPagination(PageNumberPagination):
     """
     Custom pagination class that uses page number based pagination.
     """
-    page_size = 3
+    page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
 

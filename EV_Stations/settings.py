@@ -61,11 +61,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     # Custom Middleware
     'VoltHub.middleware.RequestLoggingMiddleware',
-    
-
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -190,7 +189,7 @@ REST_FRAMEWORK = {
 
     'DEFAULT_PAGINATION_CLASS':
       'rest_framework.pagination.PageNumberPagination',
-       'PAGE_SIZE': 2
+       'PAGE_SIZE': 1
 }
 
 
@@ -216,3 +215,21 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'thatoselepe53@gmail.com'
 EMAIL_HOST_PASSWORD = 'theplanetisflat'
+
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+
+
+
+#stripe 
+STRIPE_SECRET_KEY = ""  # your real Stripe secret key
+STRIPE_PUBLISHABLE_KEY = "" 
+YOUR_DOMAIN = "http://127.0.0.1:8000"
