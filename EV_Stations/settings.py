@@ -244,3 +244,7 @@ CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 #set the celery timezone
 CELERY_TIMEZONE = 'UTC'
+
+CELERY_ACCEPT_CONTENT = ['json'] #this is the content type that celery will accept
+CELERY_TASK_SERIALIZER = 'json' #this is the serializer that celery will use to serialize tasks
+

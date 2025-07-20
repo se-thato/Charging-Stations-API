@@ -38,8 +38,10 @@ from django.http import JsonResponse
 from rest_framework.views import APIView
 
 
+from rest_framework.response import Response
+from .tasks import send_session_complete_email
 
-#charging points views 
+#charging points views
 class ChargingPointListCreateView(generics.ListCreateAPIView):
     queryset = ChargingPoint.objects.all()
     serializer_class = ChargingPointSerializer
@@ -74,6 +76,20 @@ class ChargingSessionDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ChargingSessionSerializer
     pagination_class = PageNumberPagination
     permission_classes = [IsAuthenticated]
+
+
+
+# View to handle the completion of a charging session and send an email notification
+class ChargingSessionCompleteView(APIView):
+    def post(self, request):
+        user_email = request.data.get('email')
+        station_name = request.data.get('station')
+
+        # Trigger Celery task
+        send_session_complete_email.delay(user_email, station_name)
+
+        return Response({"message": "Charging session marked complete. Email will be sent shortly."})
+
 
 
 
