@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'oauth2_provider',
     'django_filters',
+    'celery',
 
 
 
@@ -233,3 +234,13 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 STRIPE_SECRET_KEY = ""  # your real Stripe secret key
 STRIPE_PUBLISHABLE_KEY = "" 
 YOUR_DOMAIN = "http://127.0.0.1:8000"
+
+
+
+
+# Celery configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+#set the celery results backend
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+#set the celery timezone
+CELERY_TIMEZONE = 'UTC'
