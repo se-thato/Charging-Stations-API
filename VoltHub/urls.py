@@ -29,7 +29,6 @@ UserSubscriptionCreateListView,
 UserSubscriptionDetailView,
 ChargingStationAnaliticsCreateListView,
 ChargingStationAnaliticsDetailView,
-SubscriptionPlanCheckoutSession,
 )
 
 
@@ -89,8 +88,6 @@ urlpatterns = [
     path('charging-station-analytics/', ChargingStationAnaliticsCreateListView.as_view(), name="charging-station-analytics"),
     path('charging-station-analytics<int:pk>/', ChargingStationAnaliticsDetailView.as_view(), name="charging-station-analytics-details"),
 
-    #stripe subscriptionplan
-    path('subscription-checkout/', SubscriptionPlanCheckoutSession.as_view(), name="subscription-checkout"),
 
     
    

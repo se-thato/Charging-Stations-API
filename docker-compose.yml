@@ -1,0 +1,57 @@
+version: '3.9'
+
+services:
+
+  # MySQL database
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    environment:
+      MYSQL_DATABASE: ev_charging_db
+      #MYSQL_USER: root
+      #MYSQL_PASSWORD: theplanetisflat
+      MYSQL_ROOT_PASSWORD: theplanetisflat
+    ports:
+      - "3307:3306"  # Changed host port to 3307
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: "on-failure"
+
+  # Django application
+  web:
+    build: ./EV_Stations
+    working_dir: /home/app/web
+    command: >
+      sh -c "./wait-for-db.sh db:3306 &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn EV_Stations.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - .:/home/app/web
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    expose:
+      - 8000
+    depends_on:
+      - db
+    restart: "on-failure"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # Nginx server
+  nginx:
+    build: ./nginx
+    ports:
+      - 1337:80
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    depends_on:
+      - web
+    restart: "on-failure"
+
+volumes:
+  db_data:
+  static_volume:
+  media_volume:

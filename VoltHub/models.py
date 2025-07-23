@@ -193,15 +193,6 @@ class Payment(models.Model):
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='pending')
     currency = models.CharField(max_length=3, default='ZAR')
     charging_session = models.ForeignKey(ChargingSession, on_delete=models.SET_NULL, null=True, blank=True)
-    """"
-    this will link Stripe webhooks to the right payment
-    track the session later
-    verify the session was completed succesfully
-    """
-    stripe_checkout_session_id = models.CharField(max_length=255, null=True, blank=True)
-    #this will assist validate or refund a payment later
-    stripe_payment_intent_id = models.CharField(max_length=255, null=True, blank=True)
-    stripe_checkout_url = models.URLField(null=True, blank=True)
     metadata = models.JSONField(null=True, blank=True)
     
     #gateway metadata
@@ -295,8 +286,6 @@ class SubscriptionPlan(models.Model):
 
     name = models.CharField(max_length=50, choices=PLAN_CHOICES, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    #stripe 
-    stripe_price_id = models.CharField(max_length=100, null=True, blank=True)
     duration_in_days = models.DurationField()
     features = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
